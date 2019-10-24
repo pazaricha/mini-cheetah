@@ -31,6 +31,8 @@ gem 'carrierwave', '~> 2.0'
 
 gem 'money-rails', '~> 1.12'
 
+gem 'kaminari', '~> 1.1.1'
+
 group :development, :test do
   gem 'pry-rails', '~> 0.3.7'
   gem 'faker', '~> 2.6.0'

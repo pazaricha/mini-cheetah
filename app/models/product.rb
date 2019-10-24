@@ -24,4 +24,6 @@ class Product < ApplicationRecord
   belongs_to :producer, optional: true
 
   monetize :price_cents
+
+  scope :by_producer, -> (producer_id) { where(producer_id: producer_id) if producer_id.present? }
 end
