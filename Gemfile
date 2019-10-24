@@ -29,6 +29,8 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'rack-cors'
 gem 'carrierwave', '~> 2.0'
 
+gem 'money-rails', '~> 1.12'
+
 group :development, :test do
   gem 'pry-rails', '~> 0.3.7'
   gem 'faker', '~> 2.6.0'
