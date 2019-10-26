@@ -2,11 +2,10 @@ require 'csv'
 require 'open-uri'
 require 'fileutils'
 
-# Example remote file url 'https://paz-dummy-bucket.s3.eu-central-1.amazonaws.com/MOCK_DATA-(1).csv'
-
 class ProductsImporter
-  def initialize(remote_csv_url)
-    @remote_csv_url = remote_csv_url
+  def initialize(remote_csv_url = nil)
+    # I'm simply hardcoding a fi;e here for this to work.
+    @remote_csv_url = remote_csv_url || 'https://paz-dummy-bucket.s3.eu-central-1.amazonaws.com/MOCK_DATA-(1).csv'
     @local_file_path = "tmp/csv_imports/#{Time.now.strftime('%Y%m%d%H%M%S')}"
     @local_file_path_with_file_name = "#{@local_file_path}/products.csv"
     @failures = []
@@ -18,12 +17,14 @@ class ProductsImporter
 
       download_file
 
-      process
+      process_file
 
       if @failures.blank?
         delete_local_folder_and_file
       else
-        failed_products_skus = @failures.map { |failed_product_hash| failed_product_hash[:sku] }
+        failed_products_skus = @failures.map do |failed_product_hash|
+          failed_product_hash[:sku]
+        end
 
         Rails.logger.error "Some products creation has failed :( \n\n Failed products SKUs: #{failed_products_skus}.\n\n File to inspect: #{@local_file_path_with_file_name}"
       end
@@ -46,7 +47,7 @@ class ProductsImporter
     end
   end
 
-  def process
+  def process_file
     Rails.logger.info "Starting to process products"
 
     CSV.foreach("#{Rails.root}/#{@local_file_path_with_file_name}", headers: true) do |row|
