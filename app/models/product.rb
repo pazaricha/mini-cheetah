@@ -4,6 +4,7 @@
 #
 #  id          :bigint           not null, primary key
 #  barcode     :string
+#  image       :string
 #  name        :string
 #  price_cents :integer          default(0)
 #  sku         :uuid
@@ -18,6 +19,8 @@
 #
 
 class Product < ApplicationRecord
+  mount_uploader :image, ImageUploader
+
   validates :sku, presence: true, uniqueness: true
   validates :barcode, presence: true
 

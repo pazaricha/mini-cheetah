@@ -1,3 +1,7 @@
+# This class is responsible for importing products into the database from a given CSV with the structure provided in the assignment.
+# This can be optimized and improved in various ways (security againts race conditions, performance optimizations and more) (which I'd be happy to elaborate if needed), but due to time constraints, I have setteled on this implementation.
+
+
 require 'csv'
 require 'open-uri'
 require 'fileutils'
@@ -51,36 +55,41 @@ class ProductsImporter
     Rails.logger.info "Starting to process products"
 
     CSV.foreach("#{Rails.root}/#{@local_file_path_with_file_name}", headers: true) do |row|
-      product_sku = row['sku (unique id)']
-      next if product_sku.blank?
+      begin
+        product_sku = row['sku (unique id)']
+        next if product_sku.blank?
 
-      Rails.logger.info "Processing product: #{product_sku}"
+        Rails.logger.info "Processing product: #{product_sku}"
 
-      if Product.exists?(sku: product_sku)
-        Rails.logger.info "Skipping product: #{product_sku} because it already exists"
-        next
+        if Product.exists?(sku: product_sku)
+          Rails.logger.info "Skipping product: #{product_sku} because it already exists"
+          next
+        end
+
+        producer = Producer.find_or_create_by(name: row['producer']) if row['producer'].present?
+
+        product = Product.create(sku: product_sku) do |product|
+          product.producer = producer
+          product.name = row['product_name']
+          product.price_cents = row['price_cents']
+          product.barcode = row['barcode']
+          # The gsub is because a default http url redirects to a https url and carrierwave does not allow
+          # redirects when uploading an image from a remote url. It has to be the direct url of the image.
+          product.remote_image_url = row['photo_url'].gsub('http://', 'https://') if row['photo_url'].present?
+        end
+
+        if product.errors.present?
+          errors = product.errors.messages.to_sentence
+
+          Rails.logger.error "Failed to create product: #{product.sku}. Errors: #{errors}"
+
+          @failures << { sku: product.sku, errors: errors }
+        else
+          Rails.logger.info "Product: #{product.sku}. created successfully!"
+        end
+      rescue => e
+        @failures << { sku: product.sku, errors: e.to_s }
       end
-
-      producer = Producer.find_or_create_by(name: row['producer']) if row['producer'].present?
-
-      product = Product.create(sku: product_sku) do |product|
-        product.producer = producer
-        product.name = row['product_name']
-        product.price_cents = row['price_cents']
-        product.barcode = row['barcode']
-      end
-
-      if product.errors.present?
-        errors = product.errors.messages.to_sentence
-
-        Rails.logger.error "Failed to create product: #{product.sku}. Errors: #{errors}"
-
-        @failures << { sku: product.sku, errors: errors }
-      else
-        Rails.logger.info "Product: #{product.sku}. created successfully!"
-      end
-
-
     end
   end
 
