@@ -2,15 +2,13 @@ class ProductsController < ApplicationController
   def index
     products = Product.includes(:producer).by_producer(params[:producer_id]).page(params[:page]).all
 
-    # render json: products.to_json(only: attributes_to_include)
-    render json: products, fields: attributes_to_include, include: associations_to_include
+    render json: products, fields: attributes_to_include, include: relations_to_include
   end
 
   def show
     product = Product.find(params[:id])
 
-    # render json: product.to_json(only: attributes_to_include)
-    render json: product, fields: attributes_to_include, include: associations_to_include
+    render json: product, fields: attributes_to_include, include: relations_to_include
   end
 
   private
@@ -36,22 +34,22 @@ class ProductsController < ApplicationController
     end
   end
 
-  def associations_to_include
-    if @associations_to_include.present?
-      return @associations_to_include
+  def relations_to_include
+    if @relations_to_include.present?
+      return @relations_to_include
     else
-      associations = params[:associations]&.split(',')&.map(&:strip)
+      relations = params[:relations]&.split(',')&.map(&:strip)
 
-      if associations.blank?
-        @associations_to_include = []
-        return @associations_to_include
+      if relations.blank?
+        @relations_to_include = []
+        return @relations_to_include
       end
 
-      @associations_to_include = Product.reflect_on_all_associations.map(&:name).reject do |association|
-        associations.exclude?(association.to_s)
+      @relations_to_include = Product.reflect_on_all_associations.map(&:name).reject do |association|
+        relations.exclude?(association.to_s)
       end
 
-      @associations_to_include
+      @relations_to_include
     end
   end
 end

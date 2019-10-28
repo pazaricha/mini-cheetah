@@ -75,6 +75,7 @@ class ProductsImporter
           product.barcode = row['barcode']
           # The gsub is because a default http url redirects to a https url and carrierwave does not allow
           # redirects when uploading an image from a remote url. It has to be the direct url of the image.
+          # Note: If I had more time I would extract adding the image into it's own seperate step to make product import faster and handle the image upload in a seperate background job.
           product.remote_image_url = row['photo_url'].gsub('http://', 'https://') if row['photo_url'].present?
         end
 
