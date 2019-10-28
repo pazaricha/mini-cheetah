@@ -10,4 +10,6 @@
 
 class User < ApplicationRecord
   validate :name, presence: true
+
+  has_many :shopping_lists
 end
