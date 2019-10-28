@@ -21,5 +21,5 @@ class ShoppingList < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :user_id }
 
   belongs_to :user
-  has_many :items, class_name: 'ShoppingListItem'
+  has_many :items, class_name: 'ShoppingListItem', dependent: :destroy
 end

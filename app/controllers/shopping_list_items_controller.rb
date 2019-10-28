@@ -1,5 +1,3 @@
-require 'median_calculator'
-
 class ShoppingListItemsController < ApplicationController
   before_action :validate_current_user
   before_action :set_shopping_list
@@ -22,14 +20,13 @@ class ShoppingListItemsController < ApplicationController
   end
 
   def reposition
-    above_and_below_items_positions =
-      @shopping_list.item.ordered_by_position.where(
-        id: [reposition_params[:item_id_above], reposition_params[:item_id_below]]
-      ).pluck(:position)
+    new_position = ShoppingListItems::RepositionCalculator.new(
+      item_to_reposition: @item,
+      item_id_above: reposition_params[:item_id_above],
+      item_id_below: reposition_params[:item_id_below]
+    ).calculate_new_position
 
-    new_position = MedianCalculator.median_between_to_numbers(above_and_below_items_positions.first, above_and_below_items_positions.last)
-
-    if @item.update(position: new_position)
+    if @item.reposition(new_position)
       render json: @item, status: :ok
     else
       render json: @item.errors, status: :unprocessable_entity
@@ -53,6 +50,11 @@ class ShoppingListItemsController < ApplicationController
 
   def reposition_params
     params.require(:shopping_list_id)
+
+    # validate atleast item_id_above or item_id_below is passed
+    params.require(:item_id_above) if params[:item_id_below].blank?
+    params.require(:item_id_below) if params[:item_id_above].blank?
+
     params.permit(:item_id_above, :item_id_below)
   end
 end
