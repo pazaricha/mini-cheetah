@@ -3,6 +3,7 @@
 # Table name: shopping_list_items
 #
 #  id               :bigint           not null, primary key
+#  position         :integer
 #  quantity         :integer
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
@@ -23,6 +24,8 @@
 class ShoppingListItem < ApplicationRecord
   validates :product_id, uniqueness: { scope: :shopping_list_id }
   validates :quantity, numericality: { greater_than_or_equal_to: 1 }
+  validates :position, numericality: { greater_than_or_equal_to: 1 },
+                       uniqueness: { scope: :shopping_list_id }
 
   belongs_to :shopping_list, dependent: :destroy
   belongs_to :product

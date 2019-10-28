@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 2019_10_28_130323) do
     t.bigint "shopping_list_id"
     t.bigint "product_id"
     t.integer "quantity"
+    t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["product_id"], name: "index_shopping_list_items_on_product_id"
