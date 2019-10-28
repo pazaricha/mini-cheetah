@@ -35,6 +35,8 @@ gem 'kaminari', '~> 1.1.1'
 
 gem 'whenever', '~> 1.0.0', require: false
 
+gem 'active_model_serializers', '~> 0.10.0'
+
 group :development, :test do
   gem 'pry-rails', '~> 0.3.7'
   gem 'faker', '~> 2.6.0'
