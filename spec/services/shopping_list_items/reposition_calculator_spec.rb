@@ -42,8 +42,8 @@ RSpec.describe ShoppingListItems::RepositionCalculator do
           )
         end
 
-        it 'returns a :reposition_everything symbol' do
-          expect(subject.calculate_new_position).to eq(:reposition_everything)
+        it 'returns 0 which will indicate all items need to be repositioned' do
+          expect(subject.calculate_new_position).to eq(0)
         end
       end
 

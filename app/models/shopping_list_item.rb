@@ -39,16 +39,13 @@ class ShoppingListItem < ApplicationRecord
 
   def reposition(new_position)
     begin
-      case new_position.class.to_s
-      when 'Symbol'
-        reposition_all_items
-      when 'Fixnum', 'Bignum'
-        with_lock do
-          update!(position: new_position)
-        end
+      return reposition_all_items if new_position <= 0
+
+      with_lock do
+        update!(position: new_position)
       end
     rescue => e
-      # This is where I will sent an error to an alert monitoring serivce.
+      # This is where I will send an error to an alert monitoring serivce such as Rollbar/Honeybadger etc.
       Rails.logger.error "Failed to reposition item: #{id}, to new_position: #{new_position}. Error: #{e}"
 
       false
@@ -69,8 +66,8 @@ class ShoppingListItem < ApplicationRecord
       # I want my new first item to be 10_000 so I won't have to run this method again when someone moves another to be the first one.
       update!(position: BASE_POSITION_OFFSET_BETWEEN_ITEMS)
 
-      self.shopping_list.items.ordered_by_position.find_each do |item|
-        item.update!(position: item.position + (BASE_POSITION_OFFSET_BETWEEN_ITEMS) * 2)
+      shopping_list.items.ordered_by_position.where.not(id: id).find_each do |item|
+        item.update!(position: item.position + (BASE_POSITION_OFFSET_BETWEEN_ITEMS * 2))
       end
     end
   end

@@ -29,7 +29,7 @@ module ShoppingListItems
         MedianCalculator.median_between_to_numbers(num_x: 1, num_y: current_smallest_position)
       else
         # need to update all items
-        :reposition_everything
+        0
       end
     end
 
