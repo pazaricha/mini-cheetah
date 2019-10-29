@@ -2,6 +2,9 @@ require 'median_calculator'
 
 module ShoppingListItems
   class RepositionCalculator
+    # item_to_reposition: the item we are trying to reposition
+    # item_id_above: the id of the item that is going to be above our item_to_reposition after he will be moved to his new position.
+    # item_id_below: the id of the item that is going to be below our item_to_reposition after he will be moved to his new position.
     def initialize(item_to_reposition:, item_id_above:, item_id_below:)
       @item_to_reposition = item_to_reposition
       @item_id_above = item_id_above
@@ -20,20 +23,20 @@ module ShoppingListItems
     private
 
     def position_for_first_item
-      current_first_item_position = @shopping_list.items.ordered_by_position.first.position
+      current_smallest_position = @shopping_list.items.minimum(:position).to_i
 
-      if current_first_item_position > 1
-        MedianCalculator.median_between_to_numbers(num_x: 1, num_y: current_first_item_position)
+      if current_smallest_position > 1
+        MedianCalculator.median_between_to_numbers(num_x: 1, num_y: current_smallest_position)
       else
-        # need to update all items by adding 10_000 to each one in one transaction
+        # need to update all items
         :reposition_everything
       end
     end
 
     def position_for_last_item
-      current_last_item_position = @shopping_list.items.ordered_by_position.last.position
+      current_biggest_position = @shopping_list.items.maximum(:position).to_i
 
-      current_last_item_position + ShoppingListItem::BASE_POSITION_OFFSET_BETWEEN_ITEMS
+      current_biggest_position + ShoppingListItem::BASE_POSITION_OFFSET_BETWEEN_ITEMS
     end
 
     def position_for_between_items
