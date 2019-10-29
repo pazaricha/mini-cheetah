@@ -19,7 +19,7 @@ class ProductsController < ApplicationController
     else
       attributes = params[:attributes]&.split(',')&.map(&:strip)
 
-      initial_attributes_to_include = Product.column_names
+      initial_attributes_to_include = Product.column_names + ['price']
 
       if attributes.blank?
         @attributes_to_include = initial_attributes_to_include
