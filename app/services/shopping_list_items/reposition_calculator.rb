@@ -23,7 +23,7 @@ module ShoppingListItems
       current_first_item_position = @shopping_list.items.ordered_by_position.first.position
 
       if current_first_item_position > 1
-        MedianCalculator.median_between_to_numbers(1, current_first_item_position)
+        MedianCalculator.median_between_to_numbers(num_x: 1, num_y: current_first_item_position)
       else
         # need to update all items by adding 10_000 to each one in one transaction
         :reposition_everything
@@ -42,7 +42,7 @@ module ShoppingListItems
         id: [@item_id_above, @item_id_below]
       ).pluck(:position)
 
-    MedianCalculator.median_between_to_numbers(above_and_below_items_positions.first, above_and_below_items_positions.last)
+    MedianCalculator.median_between_to_numbers(num_x: above_and_below_items_positions.first, num_y: above_and_below_items_positions.last)
     end
   end
 end
