@@ -1,22 +1,22 @@
-# This seeds file should only be run once via the rails db:seeds function
+# This seeds file should only be run once via the rails/rake db:seed function
 
-Rails.logger.info 'Creating a User'
+puts 'Creating a User'
 user = FactoryBot.create(:user)
-Rails.logger.info 'User created!'
+puts 'User created!'
 
-Rails.logger.info 'Creating a ShoppingList for that User'
+puts 'Creating a ShoppingList for that User'
 shopping_list = FactoryBot.create(:shopping_list, user: user)
-Rails.logger.info 'ShoppingList created!'
+puts 'ShoppingList created!'
 
 # Import initial products and producers
-Rails.logger.info 'Importing initial Products and Producers'
+puts 'Importing initial Products and Producers'
 ProductsImporter.new.import
-Rails.logger.info 'Products and Producers imported!'
+puts 'Products and Producers imported!'
 
 # Create shopping_list_items for that shopping_list
-Rails.logger.info "Creating ShoppingListItems for that User's ShoppingList"
+puts "Creating ShoppingListItems for that User's ShoppingList"
 Product.all.limit(100).each do |product|
   shopping_list.items.create(product: product, quantity: rand(1..100))
 end
-Rails.logger.info 'ShoppingListItems created!'
+puts 'ShoppingListItems created!'
 
