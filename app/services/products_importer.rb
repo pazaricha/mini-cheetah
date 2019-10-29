@@ -8,7 +8,7 @@ require 'fileutils'
 
 class ProductsImporter
   def initialize(remote_csv_url = nil)
-    # I'm simply hardcoding a fi;e here for this to work.
+    # I'm simply hardcoding a file here for this to work.
     @remote_csv_url = remote_csv_url || 'https://paz-dummy-bucket.s3.eu-central-1.amazonaws.com/MOCK_DATA-(1).csv'
     @local_file_path = "tmp/csv_imports/#{Time.now.strftime('%Y%m%d%H%M%S')}"
     @local_file_path_with_file_name = "#{@local_file_path}/products.csv"

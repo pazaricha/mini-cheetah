@@ -14,6 +14,10 @@ class ProductsController < ApplicationController
   private
 
   def attributes_to_include
+    # By default, all of the ProductsSerializer attributes are included
+    # It can be restricted via the "attributes" query string
+    # For example: localhost:3000/products?attributes=id,name,price
+
     if @attributes_to_include.present?
       return @attributes_to_include
     else
@@ -35,6 +39,10 @@ class ProductsController < ApplicationController
   end
 
   def relations_to_include
+    # By default, none of the ProductsSerializer relations are included
+    # They can be included via the "relations" query string
+    # For example: localhost:3000/products?relations=producer
+
     if @relations_to_include.present?
       return @relations_to_include
     else

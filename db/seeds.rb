@@ -1,7 +1,22 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rails db:seed command (or created alongside the database with db:setup).
-#
-# Examples:
-#
-#   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
-#   Character.create(name: 'Luke', movie: movies.first)
+# This seeds file should only be run once via the rails db:seeds function
+
+Rails.logger.info 'Creating a User'
+user = FactoryBot.create(:user)
+Rails.logger.info 'User created!'
+
+Rails.logger.info 'Creating a ShoppingList for that User'
+shopping_list = FactoryBot.create(:shopping_list, user: user)
+Rails.logger.info 'ShoppingList created!'
+
+# Import initial products and producers
+Rails.logger.info 'Importing initial Products and Producers'
+ProductsImporter.new.import
+Rails.logger.info 'Products and Producers imported!'
+
+# Create shopping_list_items for that shopping_list
+Rails.logger.info "Creating ShoppingListItems for that User's ShoppingList"
+Product.all.limit(100).each do |product|
+  shopping_list.items.create(product: product, quantity: rand(1..100))
+end
+Rails.logger.info 'ShoppingListItems created!'
+
