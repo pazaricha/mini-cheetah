@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe ShoppingListItem, type: :model do
+  let(:shopping_list) { create(:shopping_list) }
+
   describe '#reposition' do
-    let(:shopping_list) { create(:shopping_list) }
     let(:first_item_original_position) { 1000 }
     let(:second_item_original_position) { 2000 }
     let(:third_item_original_position) { 3000 }
@@ -59,6 +60,25 @@ RSpec.describe ShoppingListItem, type: :model do
         allow(second_item).to receive(:reposition_all_items).and_raise('random error')
 
         expect(second_item.reposition(new_position)).to eq(false)
+      end
+    end
+  end
+
+  describe 'private_methods' do
+    describe '#set_default_position_if_not_provided' do
+      let(:item) do
+        build(
+          :shopping_list_item,
+          shopping_list: shopping_list
+        )
+      end
+
+      it "sets the item's position the current biggest position + ShoppingListItem::BASE_POSITION_OFFSET_BETWEEN_ITEMS" do
+        expect(item.position).to eq(nil)
+
+        item.send(:set_default_position_if_not_provided)
+
+        expect(item.position).to eq(ShoppingListItem::BASE_POSITION_OFFSET_BETWEEN_ITEMS)
       end
     end
   end
