@@ -31,7 +31,7 @@ gem 'carrierwave', '~> 2.0'
 
 gem 'money-rails', '~> 1.12'
 
-gem 'kaminari', '~> 1.1.1'
+gem 'kaminari', '~> 1.2.1'
 
 gem 'whenever', '~> 1.0.0', require: false
 
